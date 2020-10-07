@@ -1,6 +1,11 @@
+import random
+from util import Stack, Queue  # These may come in handy
+
+
 class User:
     def __init__(self, name):
         self.name = name
+
 
 class SocialGraph:
     def __init__(self):
@@ -45,8 +50,24 @@ class SocialGraph:
         # !!!! IMPLEMENT ME
 
         # Add users
+        for i in range(num_users):
+            self.add_user(f"User {i}")
 
         # Create friendships
+        new_friendships = []
+
+        # loop through users by id
+        for user_id in self.users:
+            # loop through friends by
+            for friend_id in range(user_id+1, self.last_id+1):
+                # add new friends to storage
+                new_friendships.append((user_id, friend_id))
+        random.shuffle(new_friendships)
+
+        # add friendships
+        for i in range(num_users * avg_friendships // 2):
+            friendship = new_friendships[i]
+            self.add_friendship(friendship[0], friendship[1])
 
     def get_all_social_paths(self, user_id):
         """
@@ -57,9 +78,27 @@ class SocialGraph:
 
         The key is the friend's ID and the value is the path.
         """
-        visited = {}  # Note that this is a dictionary, not a set
-        # !!!! IMPLEMENT ME
-        return visited
+        # visited = {}  # Note that this is a dictionary, not a set
+        # # !!!! IMPLEMENT ME
+        # return visited
+
+        queue = Queue()
+        visited = set()
+        results = {}
+        queue.enqueue([user_id])
+
+        while queue.size() > 0:
+            path = queue.dequeue()
+            u = path[-1]
+            if u not in visited:
+                visited.add(u)
+                results[u] = path
+                for neighbor in self.friendships[u]:
+                    path_to = list(path)
+                    path_to.append(neighbor)
+                    queue.enqueue(path_to)
+
+        return results
 
 
 if __name__ == '__main__':
